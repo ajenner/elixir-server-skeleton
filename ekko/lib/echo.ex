@@ -13,7 +13,7 @@ defmodule Echo do
   end
 
   def connect(address, port) do
-  	{:ok, socket} = :gen_tcp.connect(address, port, [:binary, packet: :raw, active: false])
+  	{:ok, socket} = :gen_tcp.connect(address, port, [:binary, active: false])
   	socket
   end
 
