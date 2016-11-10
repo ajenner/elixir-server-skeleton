@@ -1,22 +1,21 @@
 defmodule Server do
   use Application
   require Logger
+  import Supervisor.Spec
 
   @port Application.get_env(:server, :port)
 
-  def main(address_str, port_str, message) do
-    address = address_str 
-              |> String.split(".") # form a list of strings
-              |> Enum.map(fn (str) -> String.to_integer(str) end) #retrieve each string and convert them to ints
-              |> List.to_tuple # create our tuple
-    port = String.to_integer port_str
-    msg = URI.encode message
-
-    connect(address, port)
-    |> send_request(msg)
+  def start(_type, _args) do
+    IO.puts "Server Started\n"
+    children = [
+      worker(Task, [Server, :listen, [@port]])
+      supervisor(Task.Supervisor, [[name: Server.TaskSupervisor]])
+      ]
+    options = [strategy: :one_for_one, name: Server.Supervisor]
+    Supervisor.start_link(children, options)
   end
 
-  def connect(address, port) do
+  def listen(port) do
   	{:ok, socket} = :gen_tcp.connect(address, port, [:binary, active: false])
   	socket
   end
