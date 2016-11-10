@@ -1,6 +1,5 @@
 defmodule Server do
   use Application
-  require Logger
   import Supervisor.Spec
 
   @port Application.get_env(:server, :port)
@@ -23,6 +22,7 @@ defmodule Server do
   def open_conn(port) do
     case :gen_tcp.listen(port,[:binary, packet: :line, active: false, reuseaddr: true]) do
       {:ok, socket} ->
+        IO.puts "Accepting connections on port #{port}"
         receive_conn(socket)
       _ ->
         IO.puts "error opening socket connection"
@@ -30,13 +30,11 @@ defmodule Server do
     end
   end
 
-  defp send_get(line,socket) do
-    case :gen_tcp.send(socket, line) do
-      :ok ->
-        read(socket)
-      {:error, reason} ->
-        IO.puts "Error sending data: #{reason}"
-    end  
+  defp receive_conn(socket) do
+    {:ok, client} = :gen_tcp.accept(socket)
+    {:ok, pid} = Task.Supervisor.start_child(Server.TaskSupervisor, fn -> serve(client) end)
+    :ok = :gen_tcp.controlling_process(client, pid)
+    receive_conn(socket)
   end
 
   defp read(socket) do
