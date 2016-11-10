@@ -16,8 +16,18 @@ defmodule Server do
   end
 
   def listen(port) do
-  	{:ok, socket} = :gen_tcp.connect(address, port, [:binary, active: false])
-  	socket
+    IO.puts "Server listening on: #{port}"
+    open_conn(port)
+  end
+
+  def open_conn(port) do
+    case :gen_tcp.listen(port,[:binary, packet: :line, active: false, reuseaddr: true]) do
+      {:ok, socket} ->
+        receive_conn(socket)
+      _ ->
+        IO.puts "error opening socket connection"
+        System.halt
+    end
   end
 
   defp send_get(line,socket) do
