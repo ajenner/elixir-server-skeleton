@@ -1,4 +1,8 @@
-defmodule Echo do
+defmodule Server do
+  use Application
+  require Logger
+
+  @port Application.get_env(:server, :port)
 
   def main(address_str, port_str, message) do
     address = address_str 
