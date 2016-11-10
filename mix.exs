@@ -2,7 +2,7 @@ defmodule Echo.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :echo,
+    [app: :server,
      version: "0.1.0",
      elixir: "~> 1.3",
      build_embedded: Mix.env == :prod,
@@ -14,7 +14,8 @@ defmodule Echo.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger]]
+    [ mod: {Server, []},
+      applications: [:logger]]
   end
 
   # Dependencies can be Hex packages:
