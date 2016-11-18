@@ -4,12 +4,13 @@ defmodule Server do
 
   @port Application.get_env(:server, :port)
   @max_clients 32
-  @system_ip "89.100.7.32"
+  #@system_ip "89.100.7.32"
+  @system_ip "134.226.214.253"
 
   def start(_type, _args) do
     IO.puts "Server Started\n"
     children = [
-      worker(Task, [Server, :listen, [@port]])
+      worker(Task, [Server, :listen, [String.to_integer(@port)]]),
       supervisor(Task.Supervisor, [[name: Server.TaskSupervisor]])
       ]
     options = [strategy: :one_for_one, name: Server.Supervisor]

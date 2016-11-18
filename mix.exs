@@ -1,4 +1,4 @@
-defmodule Echo.Mixfile do
+defmodule Server.Mixfile do
   use Mix.Project
 
   def project do
