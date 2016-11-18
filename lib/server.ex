@@ -10,7 +10,7 @@ defmodule Server do
   def start(_type, _args) do
     IO.puts "Server Started\n"
     children = [
-      worker(Task, [Server, :listen, [Integer.parse(@port)]]),
+      worker(Task, [Server, :listen, [String.to_integer(@port)]]),
       supervisor(Task.Supervisor, [[name: Server.TaskSupervisor]])
       ]
     options = [strategy: :one_for_one, name: Server.Supervisor]
